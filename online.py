@@ -25,6 +25,26 @@ HDR = {
     'Connection': 'keep-alive'
 }
 
+def get_mp3_from_word(word):
+    """downloads the mp3 for a single word
+
+    Args:
+        word (str): a single word
+    """
+    sound = asyncio.run(get_mp3(word))
+    return audio_post_processing(sound)
+
+async def get_mp3(word):
+    """
+    Downloads the mp3 file of a word
+    """
+    # Download from webpage
+    print("Downloading mp3 file")
+
+    async with aiohttp.ClientSession(headers=HDR) as session:
+        await __request_mp3_from_forvo(session, word)
+    return word
+
 def get_mp3s_from_wordlist(words):
     """downloads mp3 from wordlist
 
@@ -48,13 +68,12 @@ async def get_mp3s(words):
     async with aiohttp.ClientSession(headers=HDR) as session:
         tasks = []
         for word in words:
-            tasks.append(asyncio.ensure_future(request_mp3_from_forvo(session, word)))
+            tasks.append(asyncio.ensure_future(__request_mp3_from_forvo(session, word)))
         forvo_data = await asyncio.gather(*tasks)
     
     return forvo_data
 
-
-async def parse_forvo(page):
+async def __parse_forvo(page):
     """
     parses html for the mp3 id
     """
@@ -75,15 +94,14 @@ async def parse_forvo(page):
 
     return play_id
 
-
-async def request_mp3_from_forvo(session, word):
+async def __request_mp3_from_forvo(session, word):
     """
     requests forvo for the mp3 id and then downloads it
     """
     async with session.get("https://forvo.com/search/" + word +"/en/") as response:
         forvo_data = await response.text()
         # parse webpage
-        play_id =  await parse_forvo(forvo_data)
+        play_id =  await __parse_forvo(forvo_data)
     
     # Download mp3 from forvo
     async with session.get("https://forvo.com/mp3/" + play_id) as response:
