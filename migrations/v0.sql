@@ -1,4 +1,11 @@
+CREATE TABLE IF NOT EXISTS `meta` (
+    version INTEGER PRIMARY KEY
+);
+
 CREATE TABLE IF NOT EXISTS `word_list` (
     `word` TEXT NOT NULL PRIMARY KEY,
     `path` TEXT NOT NULL
-)
+);
+
+DELETE FROM `meta`;
+INSERT INTO `meta` VALUES (0);

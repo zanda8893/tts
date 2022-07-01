@@ -54,14 +54,22 @@ class Database:
         """
         run though sql migrations
         """
-        # for file in migrations
+        # get migration version
         path_to_migrations  = f"{os.path.dirname(__file__)}/migrations/"
+        version: int
 
-        for file in os.listdir(path_to_migrations):
-            if file.endswith(".sql"):
-                # open file
-                with open(path_to_migrations + file, 'r') as f:
-                    # execute sql
-                    conn.executescript(f.read())
-                    # commit changes
-                    conn.commit()
+        try:
+            version = conn.execute("SELECT version FROM meta").fetchone()[0]
+        except sqlite3.OperationalError or sqlite3.OperationalError:
+            version = -1
+        
+        schema_version = len(os.listdir(path_to_migrations)) - 1
+
+        while version < schema_version:
+            version += 1
+            with open(f"{path_to_migrations}v{version}.sql", "r") as f:
+                sql = f.read()
+                conn.executescript(sql)
+            
+            conn.commit()
+            
