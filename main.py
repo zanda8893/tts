@@ -1,6 +1,5 @@
 #!/usr/bin/python3
 import logging
-
 import asyncio
 
 from pydub.playback import play 

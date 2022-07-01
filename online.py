@@ -1,3 +1,8 @@
+"""
+online.py
+
+goes though each word on a word list and downloads the mp3 from forvo
+"""
 import asyncio
 import aiohttp
 from bs4 import BeautifulSoup
