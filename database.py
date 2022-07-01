@@ -3,6 +3,7 @@ database.py
 
 Request's word list from sqlite database
 """
+from re import T
 import sqlite3
 import os
 
@@ -16,23 +17,17 @@ def get_mp3s_from_wordlist(words):
     """
     
     tuple_of_words = [(word,) for word in words]
-    print(tuple_of_words)
 
     with Database(DATABASE_NAME) as db:
-        data = db.cursor.executemany("SELECT path FROM word_list WHERE word=?", tuple_of_words)
-        for row in data:
-            print(row)
+        db.cursor.executemany("SELECT path FROM word_list WHERE word=?", tuple_of_words)
 
+        for word in words:
+            r = db.cursor.fetchone()
 
+            if r is None:
+                print(f"No sound found for word: {word}")
+                continue
 
-"""
-use case:
-
-with Database('db_file') as db:
-    db.cursor.execute("SELECT * FROM table")
-    for row in db.cursor:
-        print(row)
-"""
 # Sqlite3 database
 # https://www.sqlite.org/lang.html
 class Database:
