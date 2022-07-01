@@ -13,6 +13,8 @@ from io import BytesIO
 
 from pydub import AudioSegment
 
+from post_processing import audio_post_processing
+
 HDR = {
     'User-Agent': '''Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) \
     Chrome/23.0.1271.64 Safari/537.11''',
@@ -23,7 +25,36 @@ HDR = {
     'Connection': 'keep-alive'
 }
 
-async def find_mp3(page): #Find the mp3 link from forvo website = Class download word
+def get_mp3s_from_wordlist(words):
+    """downloads mp3 from wordlist
+
+    Args:
+        words (list): a list of words in a sentence
+    """
+    list_of_words = asyncio.run(get_mp3s(words))
+
+    for word in list_of_words:
+        word = audio_post_processing(word)
+    
+    return list_of_words
+
+async def get_mp3s(words):
+    """
+    Downloads each mp3 file for a wordlist using asyncio
+    """
+    # Download from webpage
+    print("Downloading mp3 files")
+
+    async with aiohttp.ClientSession(headers=HDR) as session:
+        tasks = []
+        for word in words:
+            tasks.append(asyncio.ensure_future(request_mp3_from_forvo(session, word)))
+        forvo_data = await asyncio.gather(*tasks)
+    
+    return forvo_data
+
+
+async def parse_forvo(page):
     """
     parses html for the mp3 id
     """
@@ -52,24 +83,8 @@ async def request_mp3_from_forvo(session, word):
     async with session.get("https://forvo.com/search/" + word +"/en/") as response:
         forvo_data = await response.text()
         # parse webpage
-        play_id =  await find_mp3(forvo_data)
+        play_id =  await parse_forvo(forvo_data)
     
     # Download mp3 from forvo
     async with session.get("https://forvo.com/mp3/" + play_id) as response:
         return AudioSegment.from_mp3(BytesIO(await response.read()))
-
-
-async def get_mp3_from_wordlist(words):
-    """
-    Downloads each mp3 file for a wordlist
-    """
-    # Download from webpage
-    print("Downloading mp3 files")
-
-    async with aiohttp.ClientSession(headers=HDR) as session:
-        tasks = []
-        for word in words:
-            tasks.append(asyncio.ensure_future(request_mp3_from_forvo(session, word)))
-        forvo_data = await asyncio.gather(*tasks)
-    
-    return forvo_data

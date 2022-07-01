@@ -1,9 +1,7 @@
 #!/usr/bin/python3
 import logging
-import asyncio
 
 from pydub.playback import play 
-from pydub.silence import split_on_silence
 
 from online import get_mp3_from_wordlist
 
@@ -17,20 +15,7 @@ def main():
 
     ##Method 1
     # request online
-    list_of_sounds = asyncio.run(get_mp3_from_wordlist(words))
-
-    # Post process mp3s
-    for sound in list_of_sounds:
-        # extract word
-        sound = split_on_silence(
-            sound,
-            silence_thresh=-50,
-            keep_silence=False,
-            min_silence_len=300
-        )[0] # +  AudioSegment.silent(duration=400)
-
-        # balance audio
-        sound.apply_gain(-20 - sound.dBFS)
+    list_of_sounds = get_mp3_from_wordlist(words)
     
     ##Method 2
     # database
