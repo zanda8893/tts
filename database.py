@@ -6,12 +6,23 @@ Request's word list from sqlite database
 import sqlite3
 import os
 
+DATABASE_NAME = "./database.db"
+
 def get_mp3s_from_wordlist(words):
     """requests mp3s from database and loads from file system
 
     Args:
         words (list): a list of words in a sentence
     """
+    
+    tuple_of_words = [(word,) for word in words]
+    print(tuple_of_words)
+
+    with Database(DATABASE_NAME) as db:
+        data = db.cursor.executemany("SELECT path FROM word_list WHERE word=?", tuple_of_words)
+        for row in data:
+            print(row)
+
 
 
 """
@@ -33,6 +44,7 @@ class Database:
         # run sql migrations
         conn = sqlite3.connect(self.db_file)
         self.migrate(conn)
+        conn.close()
 
     def __enter__(self):
         self.connection: sqlite3.Connection = sqlite3.connect(self.db_file)
@@ -43,15 +55,17 @@ class Database:
     def __exit__(self, exc_type, exc_value, traceback):
         self.connection.close()
     
-    def migrate(conn: sqlite3.Connection):
+    def migrate(self, conn: sqlite3.Connection):
         """
         run though sql migrations
         """
         # for file in migrations
-        for file in os.listdir(f"{os.path.dirname(__file__)}/migrations"):
+        path_to_migrations  = f"{os.path.dirname(__file__)}/migrations/"
+
+        for file in os.listdir(path_to_migrations):
             if file.endswith(".sql"):
                 # open file
-                with open(file, 'r') as f:
+                with open(path_to_migrations + file, 'r') as f:
                     # execute sql
                     conn.executescript(f.read())
                     # commit changes

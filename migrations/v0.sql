@@ -1,4 +1,4 @@
-CREATE IF NOT EXISTS TABLE `word_list` {
+CREATE TABLE IF NOT EXISTS `word_list` (
     `word` TEXT NOT NULL PRIMARY KEY,
-    `path` TEXT NOT NULL,
-}
+    `path` TEXT NOT NULL
+)

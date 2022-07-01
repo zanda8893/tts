@@ -81,7 +81,7 @@ async def __parse_forvo(page):
     # find span with class play  icon-size-l
     span = index.find('span', {"id" : re.compile('play_*')})
 
-    print(span)
+    # print(span)
     # get onclick method
     onclick = span.get('onclick')
     # remove play( and ) from onclick method
