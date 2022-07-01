@@ -1,0 +1,4 @@
+CREATE IF NOT EXISTS TABLE `word_list` {
+    `word` TEXT NOT NULL PRIMARY KEY,
+    `path` TEXT NOT NULL,
+}
