@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 import logging
 
-from pydub.playback import play 
+from pydub.playback import play
 
 import online
 import database
+from post_processing import audio_post_processing
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,8 +20,9 @@ def main():
     list_of_sounds = online.get_mp3s_from_wordlist(words)
     # play sound
     for sound in list_of_sounds:
+        sound = audio_post_processing(sound)
         play(sound)
-    
+
     ##Method 2
     # database
     list_of_sounds = database.get_mp3s_from_wordlist(words)
