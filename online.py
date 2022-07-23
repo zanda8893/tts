@@ -32,7 +32,7 @@ def get_mp3_from_word(word):
         word (str): a single word
     """
     sound = asyncio.run(get_mp3(word))
-    return audio_post_processing(sound)
+    return sound
 
 async def get_mp3(word):
     """
@@ -79,11 +79,11 @@ async def __parse_forvo(page):
     """
     index = BeautifulSoup(page, 'html.parser')
     # find span with class play  icon-size-l
-    span = index.find('span', {"id" : re.compile('play_*')})
+    div = index.find('div', {"id" : re.compile('play_\d+')})
 
     # print(span)
     # get onclick method
-    onclick = span.get('onclick')
+    onclick = div.get('onclick')
     # remove play( and ) from onclick method
     onclick = onclick[5:-1]
 
