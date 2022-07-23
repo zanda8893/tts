@@ -55,7 +55,7 @@ def get_mp3s_from_wordlist(words):
 
     for word in list_of_words:
         word = audio_post_processing(word)
-    
+
     return list_of_words
 
 async def get_mp3s(words):
@@ -70,7 +70,7 @@ async def get_mp3s(words):
         for word in words:
             tasks.append(asyncio.ensure_future(__request_mp3_from_forvo(session, word)))
         forvo_data = await asyncio.gather(*tasks)
-    
+
     return forvo_data
 
 async def __parse_forvo(page):
@@ -79,6 +79,10 @@ async def __parse_forvo(page):
     """
     index = BeautifulSoup(page, 'html.parser')
     # find span with class play  icon-size-l
+    if index.find('article', {"class" : re.compile('search_words empty')}):
+        print("Failed to find word on Forvo")
+        return 1
+
     div = index.find('div', {"id" : re.compile('play_\d+')})
 
     # print(span)
@@ -102,7 +106,7 @@ async def __request_mp3_from_forvo(session, word):
         forvo_data = await response.text()
         # parse webpage
         play_id =  await __parse_forvo(forvo_data)
-    
+
     # Download mp3 from forvo
     async with session.get("https://forvo.com/mp3/" + play_id) as response:
         return AudioSegment.from_mp3(BytesIO(await response.read()))
