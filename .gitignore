@@ -133,3 +133,11 @@ dmypy.json
 *.mp3
 *.wav
 cache/
+
+# JETBRAINS SHITE
+.idea/
+
+# Remove injest folder
+data/
+
+
