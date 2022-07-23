@@ -140,4 +140,8 @@ cache/
 # Remove injest folder
 data/
 
+# ignore database files
+*.db
+*.sqlite3
+
 
