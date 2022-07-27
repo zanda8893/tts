@@ -1,3 +1,8 @@
 beautifulsoup4==4.11.1
 pydub==0.25.1
 aiohttp==3.8.1
+vosk==0.3.18
+numpy~=1.23.1
+matplotlib~=3.5.2
+tqdm~=4.64.0
+librosa~=0.9.2

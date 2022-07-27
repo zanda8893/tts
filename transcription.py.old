@@ -1,0 +1,19 @@
+#!./venv/bin/python3
+import speech_recognition as sr
+
+r = sr.Recognizer()
+
+
+def transcribe(file):
+    with sr.AudioFile(file) as source:
+        audio = r.record(source)  # read the entire audio file
+    word = None
+    try:
+        word = r.recognize_google(audio)
+    except:
+        print("Failed to transcribe")
+    return word
+
+
+if __name__ == "__main__":
+    print(transcribe("data_imports/midlands_english_male/mim_02484_01416200252.wav"))

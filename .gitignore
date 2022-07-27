@@ -138,7 +138,7 @@ cache/
 .idea/
 
 # Remove injest folder
-data/
+data_imports/
 
 # ignore database files
 *.db

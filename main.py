@@ -9,6 +9,7 @@ from post_processing import audio_post_processing
 
 logging.basicConfig(level=logging.INFO)
 
+
 def main():
     # Read in sentence from stdin
     sentence = input("Enter sentence: ")
@@ -20,7 +21,7 @@ def main():
     list_of_sounds = online.get_mp3s_from_wordlist(words)
     # play sound
     for sound in list_of_sounds:
-        sound = audio_post_processing(sound)
+        sound = audio_post_processing(sound)[0]
         play(sound)
 
     ##Method 2
